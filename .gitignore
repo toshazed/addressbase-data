@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.swp
+.DS_Store
+cache
+tmp
+log
+data/address
+data/street
+bin/addresses
+bin/streets
