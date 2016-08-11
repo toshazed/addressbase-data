@@ -88,4 +88,4 @@ clean::
 	rm -rf $(BINS) log
 
 prune: clean
-	rm -rf cache data/street data/address
+	rm -rf cache data/street data/address data/address-postcode
