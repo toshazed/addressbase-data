@@ -29,7 +29,7 @@ standard and have been informed by [Open Addresses UK](https://alpha.openaddress
 - name-cy — an alternative street name, in Welsh
 - place — a reference to the [place](https://github.com/openregister/place-data) discovery register, matched to the:
   - locality — the name of a locality
-  - town — the name of a town
+  - town — the name of a nearby town
   - administrative-area — the name of the administrative area
 - point — an indication of the geographic location of the street
 - start-date — the date from which an entry becomes applicable
@@ -58,7 +58,7 @@ The data can be ordered using the session-based shopping cart system. We have no
 
 ### Downloading
 
-Use make to download the AddressBase CSV files in the [cache/AddressBase](cache/AddressBase) directory:
+Use make to download the AddressBase CSV files in the `cache/AddressBase` directory:
 
     $ make download
 
