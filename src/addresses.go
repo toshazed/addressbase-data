@@ -240,7 +240,7 @@ func PrimaryAddress(address string, parent_address string, primary_name string, 
 	primary_address := PrimaryAddress(address, parent.parent_address, primary_name, depth+1)
 
 	if primary_address == "" {
-		fixed(address, "error", "primary_name", primary_name, "doesn't match parent.name ["+parent.name+"]")
+		fixed(address, "error", "primary_name", primary_name, "unable to find primary_name, parent.name ["+parent.name+"]")
 	}
 	return ""
 }
