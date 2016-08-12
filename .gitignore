@@ -10,3 +10,5 @@ data/address-postcode
 data/street
 bin/addresses
 bin/streets
+bin/tsvcount
+stats
