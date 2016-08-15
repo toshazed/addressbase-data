@@ -92,12 +92,15 @@ STATS_STREET_CUSTODIAN=\
 STATS_ADDRESS=\
 	stats/address/name.tsv \
 	stats/address/name-cy.tsv \
+	stats/address/street.tsv \
 	stats/address/street-custodian,address.tsv \
+	stats/address/street-custodian,street.tsv \
 	stats/address/street-custodian,name.tsv \
 	stats/address/street-custodian,name-cy.tsv
 
 STATS_ADDRESS_CUSTODIAN=\
 	stats/address/street-custodian/address.tsv \
+	stats/address/street-custodian/street.tsv \
 	stats/address/street-custodian/name.tsv \
 	stats/address/street-custodian/name-cy.tsv
 
