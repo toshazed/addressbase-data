@@ -53,7 +53,9 @@ The data can be ordered using the session-based shopping cart system. We have no
 * "order more"
 * select the whole map
 * add the order to your basket
-* find your order in the list of orders for your organisation
+* visit your basket, checkout
+* your order should appear in the list of orders for your organisation
+* sometime later a download page for your order will appear in the list of downloads for your organisation
 * visit the download page (not a bookmarkable URL) and use your browser to save the page as `cache/download.html`
 
 ### Downloading
