@@ -10,7 +10,7 @@ standard and have been informed by [Open Addresses UK](https://alpha.openaddress
 
 ### Address
 
-- address — The UPRN of the property or premises being addressed encoded using Douglas Crockford's [base32 encoding scheme](http://www.crockford.com/wrmg/base32.html).
+- address — The UPRN of the property or premises being addressed
 - street — the Unique Street Reference Number (USRN)
 - street-custodian — Geoplace LLP code for the local custodian for an address
 - parent-address — a reference to the address which contains this address

@@ -143,14 +143,11 @@ bin/addresses:	src/addresses.go
 bin/tsvcount:	src/tsvcount.go
 	go build -o $@ src/tsvcount.go
 
-go-get:
-	go get github.com/richardlehane/crock32
-
 
 #
 #  phony
 #
-init::	go-get
+init::
 
 download:	etc/headers cache/download.html $(ADDRESSBASE_ZIPS)
 

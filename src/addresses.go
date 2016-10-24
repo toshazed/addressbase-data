@@ -6,13 +6,9 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
-
-	"github.com/richardlehane/crock32"
 )
 
 var (
@@ -127,17 +123,6 @@ func Number(n string) string {
 
 func Point(long string, lat string) string {
 	return "[" + Number(long) + "," + Number(lat) + "]"
-}
-
-func Encode(num string) string {
-	if num == "" {
-		return ""
-	}
-	u, err := strconv.ParseUint(num, 10, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return crock32.Encode(u)
 }
 
 func Timestamp(date string) string {
@@ -282,16 +267,16 @@ func PrintAddress(address Address) {
 	}
 
 	fmt.Fprintln(fdPostcodes, strings.Join([]string{
-		Encode(address.address),
+		address.address,
 		address.postcode,
 		address.property_type,
 	}, sep))
 
 	fmt.Fprintln(fdAddresses, strings.Join([]string{
 		Timestamp(address.entry_date),
-		Encode(address.address),
-		Encode(address.parent_address),
-		Encode(primary_address),
+		address.address,
+		address.parent_address,
+		primary_address,
 		address.street,
 		address.name,
 		address.name_cy,
@@ -321,8 +306,6 @@ func PrintHeaders() {
 }
 
 func main() {
-	crock32.SetDigits("0123456789ABCDEFGHJKMNPQRSTVWXYZ")
-
 	// read CSV records
 	reader := csv.NewReader(os.Stdin)
 
