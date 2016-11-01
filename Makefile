@@ -8,12 +8,12 @@ C=,
 BINS=\
 	bin/streets\
 	bin/addresses\
+	bin/delivery-addresses\
 	bin/tsvcount
 
 all:	data stats
 
 data:	streets addresses
-
 
 #
 #  AddressBase comes as 10,964 grid files, enumerated here
@@ -24,9 +24,11 @@ ADDRESSBASE_ZIPS=$(GRIDS:%=cache/AddressBase/%.zip)
 
 GRID_STREETS=$(GRIDS:%=data/street/%.tsv)
 GRID_ADDRESSES=$(GRIDS:%=data/address/%.tsv)
+GRID_DELIVERY_ADDRESSES=$(GRIDS:%=data/delivery-address/%.tsv)
 
 streets:	bin/streets $(GRID_STREETS)
 addresses:	bin/addresses $(GRID_ADDRESSES)
+delivery-addresses:	bin/delivery-addresses $(GRID_DELIVERY_ADDRESSES)
 
 
 #
@@ -64,6 +66,11 @@ data/address/%.tsv: bin/addresses cache/AddressBase/%.zip
 		bin/addresses 3> $@ \
 			      4> $(patsubst data/address/%.tsv,log/address/%,$(@)).tsv \
 			      5> $(patsubst data/address/%.tsv,data/address-postcode/%,$(@)).tsv
+
+data/delivery-address/%.tsv: bin/delivery-addresses cache/AddressBase/%.zip
+	@mkdir -p data/delivery-address
+	unzip -p $(patsubst data/delivery-address/%.tsv,cache/AddressBase/%,$(@)).zip | \
+		bin/delivery-addresses > $@
 
 #
 #  stats
@@ -140,6 +147,9 @@ bin/streets:	src/streets.go
 bin/addresses:	src/addresses.go
 	go build -o $@ src/addresses.go
 
+bin/delivery-addresses:	src/delivery-addresses.go
+	go build -o $@ src/delivery-addresses.go
+
 bin/tsvcount:	src/tsvcount.go
 	go build -o $@ src/tsvcount.go
 
@@ -155,4 +165,4 @@ clean::
 	rm -rf $(BINS) $(STATS) log
 
 prune: clean
-	rm -rf cache data/street data/address data/address-postcode stats
+	rm -rf cache data/street data/address data/address-postcode data/delivery-address stats
