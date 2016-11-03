@@ -55,10 +55,11 @@ cache/AddressBase/%.zip: bin/download.sh cache/download.html
 #  TSV files
 #
 data/street/%.tsv: bin/streets cache/AddressBase/%.zip
-	@mkdir -p data/street log/street
+	@mkdir -p data/street data/locality log/street
 	unzip -p $(patsubst data/street/%.tsv,cache/AddressBase/%,$(@)).zip | \
 		bin/streets 3> $@ \
-			    4> $(patsubst data/street/%.tsv,log/street/%,$(@)).tsv
+			    4> $(patsubst data/street/%.tsv,log/street/%,$(@)).tsv \
+			    5> $(patsubst data/street/%.tsv,data/locality/%,$(@)).tsv
 
 data/address/%.tsv: bin/addresses cache/AddressBase/%.zip
 	@mkdir -p data/address data/address-postcode log/address

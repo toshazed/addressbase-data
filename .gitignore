@@ -9,6 +9,7 @@ data/address
 data/address-postcode
 data/delivery-address
 data/street
+data/locality
 bin/addresses
 bin/delivery-addresses
 bin/streets

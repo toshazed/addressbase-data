@@ -13,8 +13,9 @@ import (
 )
 
 var (
-	fdStreets = os.NewFile(3, "FDStreets")
-	fdFixes   = os.NewFile(4, "FDFixes")
+	fdStreets     = os.NewFile(3, "FDStreets")
+	fdFixes       = os.NewFile(4, "FDFixes")
+	fdLocalities  = os.NewFile(5, "FDLocalities")
 )
 
 const (
@@ -183,15 +184,21 @@ func PrintHeaders() {
 		"name",
 		"name-cy",
 		"place",
+		"street-custodian",
+		"end-date"}, sep))
+
+	fmt.Fprintln(fdLocalities, strings.Join([]string{
+		"street",
 		"locality",
 		"town",
 		"administrative-area",
-		"street-custodian",
 		"point",
-		"end-date"}, sep))
+		"place"}, sep))
+
 }
 
 func PrintStreet(street Street) {
+
 
 	if street.name == "" {
 		street.name = street.name_cy
@@ -209,12 +216,16 @@ func PrintStreet(street Street) {
 		street.name,
 		street.name_cy,
 		street.place,
+		street.street_custodian,
+		street.end_date}, sep))
+
+	fmt.Fprintln(fdLocalities, strings.Join([]string{
+		street.street,
 		street.locality,
 		street.town,
 		street.administrative_area,
-		street.street_custodian,
 		street.point,
-		street.end_date}, sep))
+		street.place}, sep))
 }
 
 func main() {
