@@ -189,6 +189,7 @@ func PrintHeaders() {
 
 	fmt.Fprintln(fdLocalities, strings.Join([]string{
 		"street",
+		"street-custodian",
 		"locality",
 		"town",
 		"administrative-area",
@@ -221,6 +222,7 @@ func PrintStreet(street Street) {
 
 	fmt.Fprintln(fdLocalities, strings.Join([]string{
 		street.street,
+		street.street_custodian,
 		street.locality,
 		street.town,
 		street.administrative_area,
