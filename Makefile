@@ -11,7 +11,7 @@ BINS=\
 	bin/delivery-addresses\
 	bin/tsvcount
 
-all:	data stats
+all:	data stats maps
 
 data:	streets addresses
 
@@ -25,6 +25,7 @@ ADDRESSBASE_ZIPS=$(GRIDS:%=cache/AddressBase/%.zip)
 GRID_STREETS=$(GRIDS:%=data/street/%.tsv)
 GRID_ADDRESSES=$(GRIDS:%=data/address/%.tsv)
 GRID_DELIVERY_ADDRESSES=$(GRIDS:%=data/delivery-address/%.tsv)
+STREET_CUSTODIAN_BBOXES=maps/street-custodian-bbox.tsv
 
 streets:	bin/streets $(GRID_STREETS)
 addresses:	bin/addresses $(GRID_ADDRESSES)
@@ -150,6 +151,21 @@ stats/address/%.tsv: bin/tsvcount $(GRID_ADDRESS)
 stats/locality/%.tsv: bin/tsvcount $(GRID_STREETS)
 	@mkdir -p stats/locality
 	bin/tsvcat.sh data/locality | bin/tsvcount '$(subst .tsv,,$(subst stats/locality/,,$(@)))' > $@
+
+
+
+
+#
+#  generated maps
+#
+MAPS=\
+	maps/street-custodian-bbox.tsv
+
+maps/street-custodian-bbox.tsv:	bin/tsvcat.sh bin/street-custodian-bbox.py $(GRID_ADDRESSES)
+	@mkdir -p maps
+	bin/tsvcat.sh data/address | bin/street-custodian-bbox.py > $@
+
+maps:	$(MAPS)
 
 #
 #  Go
