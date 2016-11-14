@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	fdStreets     = os.NewFile(3, "FDStreets")
-	fdFixes       = os.NewFile(4, "FDFixes")
-	fdLocalities  = os.NewFile(5, "FDLocalities")
+	fdStreets    = os.NewFile(3, "FDStreets")
+	fdFixes      = os.NewFile(4, "FDFixes")
+	fdLocalities = os.NewFile(5, "FDLocalities")
 )
 
 const (
@@ -199,7 +199,6 @@ func PrintHeaders() {
 }
 
 func PrintStreet(street Street) {
-
 
 	if street.name == "" {
 		street.name = street.name_cy
