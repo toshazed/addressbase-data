@@ -13,9 +13,8 @@ import (
 )
 
 var (
-	fdStreets    = os.NewFile(3, "FDStreets")
-	fdFixes      = os.NewFile(4, "FDFixes")
-	fdLocalities = os.NewFile(5, "FDLocalities")
+	fdStreets = os.NewFile(3, "FDStreets")
+	fdFixes   = os.NewFile(4, "FDFixes")
 )
 
 const (
@@ -65,7 +64,6 @@ type Street struct {
 	street              string
 	name                string
 	name_cy             string
-	place               string
 	locality            string
 	town                string
 	administrative_area string
@@ -150,8 +148,9 @@ func AddStreetRecord(row []string) {
 	street := AddEntry(row[STREET_RECORD_ENTRY_DATE], row[STREET_USRN])
 
 	street.street_custodian = row[STREET_SWA_ORG_REF_NAMING]
-	street.point = PointFromLine(row[STREET_START_LONG], row[STREET_START_LAT], row[STREET_END_LONG], row[STREET_END_LAT])
 	street.end_date = row[STREET_END_DATE]
+
+	street.point = PointFromLine(row[STREET_START_LONG], row[STREET_START_LAT], row[STREET_END_LONG], row[STREET_END_LAT])
 
 	UpdateEntry(street)
 }
@@ -167,13 +166,12 @@ func AddStreetDescriptor(row []string) {
 		fixed(street.street, "error", "language", row[STREET_DESCRIPTOR_LANGUAGE], "unknown")
 		street.name = row[STREET_DESCRIPTOR_DESCRIPTION]
 	}
+	street.end_date = row[STREET_DESCRIPTOR_END_DATE]
 
-	// TBD: map to a place ..
 	street.locality = row[STREET_DESCRIPTOR_LOCALITY]
 	street.town = row[STREET_DESCRIPTOR_TOWN_NAME]
 	street.administrative_area = row[STREET_DESCRIPTOR_ADMINISTRATIVE_AREA]
 
-	street.end_date = row[STREET_DESCRIPTOR_END_DATE]
 	UpdateEntry(street)
 }
 
@@ -183,18 +181,14 @@ func PrintHeaders() {
 		"street",
 		"name",
 		"name-cy",
-		"place",
 		"street-custodian",
-		"end-date"}, sep))
+		"end-date",
 
-	fmt.Fprintln(fdLocalities, strings.Join([]string{
-		"street",
-		"street-custodian",
+		// additional data used for mapping to the place ..
 		"locality",
 		"town",
 		"administrative-area",
-		"point",
-		"place"}, sep))
+		"point"}, sep))
 
 }
 
@@ -215,18 +209,14 @@ func PrintStreet(street Street) {
 		street.street,
 		street.name,
 		street.name_cy,
-		street.place,
 		street.street_custodian,
-		street.end_date}, sep))
+		street.end_date,
 
-	fmt.Fprintln(fdLocalities, strings.Join([]string{
-		street.street,
-		street.street_custodian,
+		// additional data used for mapping to the place ..
 		street.locality,
 		street.town,
 		street.administrative_area,
-		street.point,
-		street.place}, sep))
+		street.point}, sep))
 }
 
 func main() {

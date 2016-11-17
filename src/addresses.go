@@ -14,7 +14,6 @@ import (
 var (
 	fdAddresses = os.NewFile(3, "FDAddresses")
 	fdFixes     = os.NewFile(4, "FDFixes")
-	fdPostcodes = os.NewFile(5, "FDPostcodes")
 )
 
 const (
@@ -266,12 +265,6 @@ func PrintAddress(address Address) {
 		}
 	}
 
-	fmt.Fprintln(fdPostcodes, strings.Join([]string{
-		address.address,
-		address.postcode,
-		address.property_type,
-	}, sep))
-
 	fmt.Fprintln(fdAddresses, strings.Join([]string{
 		Timestamp(address.entry_date),
 		address.address,
@@ -282,16 +275,12 @@ func PrintAddress(address Address) {
 		address.name_cy,
 		address.point,
 		address.end_date,
-		address.street_custodian}, sep))
+		address.street_custodian,
+		address.postcode,
+		address.property_type}, sep))
 }
 
 func PrintHeaders() {
-	fmt.Fprintln(fdPostcodes, strings.Join([]string{
-		"address",
-		"postcode",
-		"type",
-	}, sep))
-
 	fmt.Fprintln(fdAddresses, strings.Join([]string{
 		"entry-timestamp",
 		"address",
@@ -302,7 +291,9 @@ func PrintHeaders() {
 		"name-cy",
 		"point",
 		"end-date",
-		"street-custodian"}, sep))
+		"street-custodian",
+		"postcode",
+		"property-type"}, sep))
 }
 
 func main() {

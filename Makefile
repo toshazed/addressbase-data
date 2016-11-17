@@ -5,32 +5,15 @@
 .SECONDARY:
 C=,
 
-BINS=\
-	bin/streets\
-	bin/addresses\
-	bin/delivery-addresses\
-	bin/tsvcount
+all:	data meta
 
-all:	data stats maps
-
-data:	streets addresses
 
 #
-#  AddressBase comes as 10,964 grid files, enumerated here
+#  AddressBase comes as 10,964 files, one per-OS grid
 #
 include makefiles/grids.mk
 
 ADDRESSBASE_ZIPS=$(GRIDS:%=cache/AddressBase/%.zip)
-
-GRID_STREETS=$(GRIDS:%=data/street/%.tsv)
-GRID_ADDRESSES=$(GRIDS:%=data/address/%.tsv)
-GRID_DELIVERY_ADDRESSES=$(GRIDS:%=data/delivery-address/%.tsv)
-STREET_CUSTODIAN_BBOXES=maps/street-custodian-bbox.tsv
-
-streets:	bin/streets $(GRID_STREETS)
-addresses:	bin/addresses $(GRID_ADDRESSES)
-delivery-addresses:	bin/delivery-addresses $(GRID_DELIVERY_ADDRESSES)
-
 
 #
 #  download AddressBase header records
@@ -42,7 +25,6 @@ etc/headers:
 	mkdir -p etc/headers
 	unzip -d etc/headers -o cache/headers.zip
 
-
 #
 #  download AddressBase ZIP files using the saved download.html file
 #  - see README for instructions
@@ -51,138 +33,119 @@ cache/AddressBase/%.zip: bin/download.sh cache/download.html
 	@mkdir -p cache/AddressBase
 	bin/download.sh < cache/download.html $(@)
 
-
 #
-#  TSV files
+#  extract a TSV for each grid ZIP file ..
 #
-data/street/%.tsv: bin/streets cache/AddressBase/%.zip
-	@mkdir -p data/street data/locality log/street
-	unzip -p $(patsubst data/street/%.tsv,cache/AddressBase/%,$(@)).zip | \
+cache/grid/street/%.tsv: bin/streets cache/AddressBase/%.zip
+	@mkdir -p cache/grid/street log/street
+	unzip -p $(patsubst cache/grid/street/%.tsv,cache/AddressBase/%,$(@)).zip | \
 		bin/streets 3> $@ \
-			    4> $(patsubst data/street/%.tsv,log/street/%,$(@)).tsv \
-			    5> $(patsubst data/street/%.tsv,data/locality/%,$(@)).tsv
+			    4> $(patsubst cache/grid/street/%.tsv,log/street/%,$(@)).tsv
 
-data/address/%.tsv: bin/addresses cache/AddressBase/%.zip
-	@mkdir -p data/address data/address-postcode log/address
-	unzip -p $(patsubst data/address/%.tsv,cache/AddressBase/%,$(@)).zip | \
+cache/grid/address/%.tsv: bin/addresses cache/AddressBase/%.zip
+	@mkdir -p cache/grid/address cache/grid/address-postcode log/address
+	unzip -p $(patsubst cache/grid/address/%.tsv,cache/AddressBase/%,$(@)).zip | \
 		bin/addresses 3> $@ \
-			      4> $(patsubst data/address/%.tsv,log/address/%,$(@)).tsv \
-			      5> $(patsubst data/address/%.tsv,data/address-postcode/%,$(@)).tsv
+			      4> $(patsubst cache/grid/address/%.tsv,log/address/%,$(@)).tsv
 
-data/delivery-address/%.tsv: bin/delivery-addresses cache/AddressBase/%.zip
-	@mkdir -p data/delivery-address
-	unzip -p $(patsubst data/delivery-address/%.tsv,cache/AddressBase/%,$(@)).zip | \
-		bin/delivery-addresses > $@
 
 #
-#  stats
+#  create a TSV file for each street-custodian
 #
-STATS_STREET=\
-	stats/street/name.tsv \
-	stats/street/name-cy.tsv \
-	stats/street/street-custodian,street.tsv \
-	stats/street/street-custodian,name.tsv \
-	stats/street/street-custodian,name-cy.tsv
+include makefiles/custodians.mk
 
-STATS_STREET_CUSTODIAN=\
-	stats/street/street-custodian/street.tsv \
-	stats/street/street-custodian/name.tsv \
-	stats/street/street-custodian/name-cy.tsv
+GRID_STREETS=$(GRIDS:%=cache/grid/street/%.tsv)
+GRID_ADDRESSES=$(GRIDS:%=cache/grid/address/%.tsv)
 
-STATS_ADDRESS=\
-	stats/address/name.tsv \
-	stats/address/name-cy.tsv \
-	stats/address/street.tsv \
-	stats/address/street-custodian,address.tsv \
-	stats/address/street-custodian,street.tsv \
-	stats/address/street-custodian,name.tsv \
-	stats/address/street-custodian,name-cy.tsv
+CACHE_STREETS=$(CUSTODIANS:%=cache/street/%.tsv)
+CACHE_ADDRESSES=$(CUSTODIANS:%=cache/address/%.tsv)
 
-STATS_ADDRESS_CUSTODIAN=\
-	stats/address/street-custodian/address.tsv \
-	stats/address/street-custodian/street.tsv \
-	stats/address/street-custodian/name.tsv \
-	stats/address/street-custodian/name-cy.tsv
+$(CACHE_STREETS):	cache/street/.touched
+$(CACHE_ADDRESSES):	cache/address/.touched
 
-STATS_LOCALITY=\
-	stats/locality/locality.tsv \
-	stats/locality/town.tsv \
-	stats/locality/administrative-area.tsv \
-	stats/locality/street-custodian,locality.tsv \
-	stats/locality/street-custodian,town.tsv \
-	stats/locality/street-custodian,administrative-area.tsv
+cache/street/.touched:	bin/tsvcat bin/tsvsplit $(GRID_STREETS)
+	mkdir -p cache/street
+	bin/tsvcat.sh cache/grid/street | cut -d'	' -f2- | bin/tsvsplit cache/street/ .tsv street-custodian
+	touch $@
 
-STATS_LOCALITY_CUSTODIAN=\
-	stats/locality/street-custodian/locality.tsv \
-	stats/locality/street-custodian/town.tsv \
-	stats/locality/street-custodian/administrative-area.tsv
-
-STATS=\
-	$(STATS_ADDRESS_CUSTODIAN) \
-	$(STATS_STREET_CUSTODIAN) \
-	$(STATS_LOCALITY_CUSTODIAN) \
-	$(STATS_STREET) \
-	$(STATS_ADDRESS) \
-	$(STATS_LOCALITY)
-
-stats:	$(STATS)
-
-stats/street/street-custodian/%.tsv: bin/tsvcount stats/street/street-custodian,%.tsv
-	@mkdir -p stats/street/street-custodian
-	bin/tsvcount 'street-custodian' < $(subst street-custodian/,street-custodian$C,$(@)) > $@
-
-stats/address/street-custodian/%.tsv: bin/tsvcount stats/address/street-custodian,%.tsv
-	@mkdir -p stats/address/street-custodian
-	bin/tsvcount 'street-custodian' < $(subst street-custodian/,street-custodian$C,$(@)) > $@
-
-stats/locality/street-custodian/%.tsv: bin/tsvcount stats/locality/street-custodian,%.tsv
-	@mkdir -p stats/locality/street-custodian
-	bin/tsvcount 'street-custodian' < $(subst street-custodian/,street-custodian$C,$(@)) > $@
+cache/address/.touched:	bin/tsvcat bin/tsvsplit $(GRID_ADDRESSES)
+	mkdir -p cache/address
+	bin/tsvcat.sh cache/grid/address | cut -d'	' -f2- | bin/tsvsplit cache/address/ .tsv street-custodian
+	touch $@
 
 
-stats/street/%.tsv: bin/tsvcount $(GRID_STREETS)
-	@mkdir -p stats/street
-	bin/tsvcat.sh data/street | bin/tsvcount '$(subst .tsv,,$(subst stats/street/,,$(@)))' > $@
+#
+#  map to register-shaped TSV data from per-custodian files
+#
+data:	streets addresses
 
-stats/address/%.tsv: bin/tsvcount $(GRID_ADDRESS)
-	@mkdir -p stats/address
-	bin/tsvcat.sh data/address | bin/tsvcount '$(subst .tsv,,$(subst stats/address/,,$(@)))' > $@
+DATA_STREETS=$(CUSTODIANS:%=data/street/%.tsv)
+DATA_ADDRESSES=$(CUSTODIANS:%=data/address/%.tsv)
 
-stats/locality/%.tsv: bin/tsvcount $(GRID_STREETS)
-	@mkdir -p stats/locality
-	bin/tsvcat.sh data/locality | bin/tsvcount '$(subst .tsv,,$(subst stats/locality/,,$(@)))' > $@
+streets:	$(DATA_STREETS)
+addresses:	$(DATA_ADDRESSES)
 
+# map place names
+data/street/%.tsv:	bin/street-place.py cache/street/%.tsv
+	@mkdir -p data/street log/street-place
+	bin/street-place.py \
+			$(patsubst data/street/%,maps/place/%,$(@)) \
+			3> $(patsubst data/street/%,log/street-place/%,$(@)) \
+			< $(patsubst data/street/%,cache/street/%,$(@)) > $@
+
+# TBD: collapsing this step into the grid reduce will save disk space
+data/address/%.tsv:	cache/address/%.tsv
+	@mkdir -p data/address
+	cut -d'	' -f1-9 < $< > $@
 
 
 
 #
-#  generated maps
+#  maps, data used to map street locations to place-data
 #
 MAPS=\
 	maps/street-custodian-bbox.tsv
 
+maps:	$(MAPS)
+
+#
+#  bounding-box for each custodian
+#
 maps/street-custodian-bbox.tsv:	bin/tsvcat.sh bin/street-custodian-bbox.py $(GRID_ADDRESSES)
 	@mkdir -p maps
 	bin/tsvcat.sh data/address | bin/street-custodian-bbox.py > $@
 
-maps:	$(MAPS)
+
+#
+#  AddressBase metadata
+#
+meta: delivery-addresses
+
+GRID_DELIVERY_ADDRESSES=$(GRIDS:%=cache/grid/delivery-address/%.tsv)
+
+delivery-addresses:	bin/delivery-addresses $(GRID_DELIVERY_ADDRESSES)
+
+cache/grid/delivery-address/%.tsv: bin/delivery-addresses cache/AddressBase/%.zip
+	@mkdir -p cache/grid/delivery-address
+	unzip -p $(patsubst cache/grid/delivery-address/%.tsv,cache/AddressBase/%,$(@)).zip | \
+		bin/delivery-addresses > $@
+
+
 
 #
 #  Go
 #
+BINS=\
+	bin/addresses\
+	bin/streets\
+	bin/delivery-addresses\
+	bin/tsvsplit\
+	bin/tsvcount
+
 bin:	$(BINS)
 
-bin/streets:	src/streets.go
-	go build -o $@ src/streets.go
-
-bin/addresses:	src/addresses.go
-	go build -o $@ src/addresses.go
-
-bin/delivery-addresses:	src/delivery-addresses.go
-	go build -o $@ src/delivery-addresses.go
-
-bin/tsvcount:	src/tsvcount.go
-	go build -o $@ src/tsvcount.go
+bin/%: src/%.go
+	go build -o $@ $<
 
 
 #
@@ -196,4 +159,4 @@ clean::
 	rm -rf $(BINS) $(STATS) log
 
 prune: clean
-	rm -rf cache data/street data/address data/address-postcode data/delivery-address stats
+	rm -rf cache data/street data/address stats
