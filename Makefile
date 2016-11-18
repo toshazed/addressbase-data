@@ -1,11 +1,11 @@
 #
 #  process AddressBase
 #
-.PHONY: init bin all data stats clean prune
+.PHONY: init bin all data meta maps stats clean prune
 .SECONDARY:
 C=,
 
-all:	data meta
+all:	data meta maps
 
 
 #
