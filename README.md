@@ -35,11 +35,6 @@ standard and have been informed by [Open Addresses UK](https://alpha.openaddress
 - start-date — the date from which an entry becomes applicable
 - end-date — the date from which an entry becomes no longer applicable
 
-### Street-custodian
-
-- street-custodian — Geoplace LLP code for the local custodian for a street
-- local-authority — a CURIE for the organisation responsible for the address or street record
-
 ## Source data
 
 A local copy of AddressBase™ Premium, which includes the geographic location of addresses and historical entries is needed to build the register-shaped data.
