@@ -55,7 +55,7 @@ The data can be ordered using the session-based shopping cart system. We have no
 * add the order to your basket
 * visit your basket, checkout
 * "place your order"
-* your order should appear in the list of orders for your organisation
+* your order should eventually appear in the list of orders for your organisation. This can take some time
 * sometime later (allow several minutes to elapse) a download page for your order will appear in the list of downloads for your organisation
 * visit the download page (not a bookmarkable URL) and use your browser to save the page as `cache/download.html`
 
