@@ -51,7 +51,7 @@ The data can be ordered using the session-based shopping cart system. We have no
 * visit the [orders page](https://orders.ordnancesurvey.co.uk/orders/index.html)
 * order a new copy AddressBase™ Premium 5km Download in CSV format "Full Supply"
 * "order more"
-* select the whole map
+* select the whole map (requires you have Adobe Flash player installed)
 * add the order to your basket
 * visit your basket, checkout
 * "place your order"
