@@ -8,5 +8,5 @@ file=$(basename "$out")
 
 grep '<li>' |
   grep $file |
-  sed -e 's/^.*<a href="//' -e 's/">Add.*$//' -e 's/&amp;/\&/g' |
+  sed -e "s/^.*<a href=[\"|']//" -e "s/[\"|']>Add.*$//" -e 's/&amp;/\&/g' |
       xargs curl -s  > "$out"
