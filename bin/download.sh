@@ -6,7 +6,11 @@
 out="$1"
 file=$(basename "$out")
 
-grep '<li>' |
-  grep $file |
-  sed -e "s/^.*<a href=[\"|']//" -e "s/[\"|']>Add.*$//" -e 's/&amp;/\&/g' |
-      xargs curl -s  > "$out"
+if [[ -e $out ]]; then
+  echo "exists: $out";
+else
+  grep '<li>' |
+    grep $file |
+    sed -e "s/^.*<a href=[\"|']//" -e "s/[\"|']>Add.*$//" -e 's/&amp;/\&/g' |
+        xargs curl -s  > "$out";
+fi
