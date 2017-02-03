@@ -61,8 +61,10 @@ The data can be ordered using the session-based shopping cart system. We have no
 
 ### Downloading
 
-Use make to download the AddressBase CSV files in the `cache/AddressBase` directory:
+Use make to download the AddressBase CSV files in the `cache/AddressBase` directory,
+if you have an old download then remove `cache/AddressBase` first:
 
+    $ rm -rf ./cache/AddressBase
     $ make download
 
 ### Building
