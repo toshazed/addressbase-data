@@ -63,12 +63,12 @@ CACHE_ADDRESSES=$(CUSTODIANS:%=cache/address/%.tsv)
 $(CACHE_STREETS):	cache/street/.touched
 $(CACHE_ADDRESSES):	cache/address/.touched
 
-cache/street/.touched:	bin/tsvcat bin/tsvsplit $(GRID_STREETS)
+cache/street/.touched:	bin/tsvcat.sh bin/tsvsplit $(GRID_STREETS)
 	mkdir -p cache/street
 	bin/tsvcat.sh cache/grid/street | cut -d'	' -f2- | bin/tsvsplit cache/street/ .tsv street-custodian
 	touch $@
 
-cache/address/.touched:	bin/tsvcat bin/tsvsplit $(GRID_ADDRESSES)
+cache/address/.touched:	bin/tsvcat.sh bin/tsvsplit $(GRID_ADDRESSES)
 	mkdir -p cache/address
 	bin/tsvcat.sh cache/grid/address | cut -d'	' -f2- | bin/tsvsplit cache/address/ .tsv street-custodian
 	touch $@
